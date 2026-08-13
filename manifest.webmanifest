@@ -1,0 +1,19 @@
+{
+  "name": "TypeRank - Typing Challenge",
+  "short_name": "TypeRank",
+  "description": "A 10-level typing speed and accuracy challenge.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff8fd",
+  "theme_color": "#f43f9e",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

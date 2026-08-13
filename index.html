@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TypeRank — 10 Level Typing Challenge</title>
+<style>
+:root{
+ --pink:#f43f9e;--pink2:#ec4899;--lav:#a78bfa;--purple:#8b5cf6;
+ --yellow:#facc15;--ink:#17152b;--muted:#6b6680;--white:#fff;
+ --line:#eadff1;--soft:#fff8fd;--green:#22c55e;--red:#ef4444;
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:Inter,Segoe UI,system-ui,sans-serif;background:linear-gradient(135deg,#fff 0%,#fff7fc 48%,#f6f0ff 100%);color:var(--ink)}
+button{font:inherit;cursor:pointer}
+.app{max-width:1250px;margin:auto;padding:24px}
+.header{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:50px;height:50px;border-radius:16px;background:linear-gradient(135deg,var(--pink),var(--lav));display:grid;place-items:center;font-size:27px;box-shadow:0 8px 25px #d9469b30}
+.brand h1{margin:0;font-size:28px}.brand p{margin:2px 0;color:var(--muted);font-size:13px}
+.sound{display:flex;gap:8px}.sound button{border:1px solid var(--line);background:#fff;border-radius:12px;padding:9px 13px;color:var(--ink);box-shadow:0 3px 12px #6b4a8012}
+.dashboard{display:grid;grid-template-columns:220px 1fr 190px;gap:16px;margin-top:20px}
+.card{background:#ffffffd9;border:1px solid var(--line);border-radius:20px;box-shadow:0 10px 35px #744c8910}
+.levels{padding:15px}.levels h3{text-align:center;margin:3px 0 13px}.level{width:100%;display:flex;align-items:center;gap:10px;padding:10px 8px;border:1px solid transparent;background:transparent;border-radius:14px;text-align:left;margin:5px 0;color:var(--ink)}.level:hover:not(:disabled){background:#fff0f8}.level.active{border-color:#f4b6d8;background:linear-gradient(90deg,#fff1f8,#f8f1ff)}.level.done{color:#15803d}.level:disabled{opacity:.48;cursor:not-allowed}.badge{width:32px;height:32px;flex:0 0 32px;border-radius:10px;display:grid;place-items:center;font-weight:900;background:#eee6ff;color:#7c3aed}.level.active .badge{background:linear-gradient(135deg,var(--yellow),#f59e0b);color:#3d2700}.level.done .badge{background:#dcfce7;color:#15803d}.level strong{font-size:12px;display:block}.level small{font-size:10px;color:var(--muted)}
+.best{margin-top:12px;padding:12px;border-top:1px solid var(--line);text-align:center}.best b{font-size:23px;color:var(--pink)}
+.main{padding:18px}.levelHead{display:flex;justify-content:space-between;align-items:center;gap:15px;border:1px solid #f4c5df;background:linear-gradient(100deg,#fff5fa,#faf6ff);padding:16px 18px;border-radius:17px}.rankTitle{display:flex;align-items:center;gap:12px}.rankIcon{width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,var(--yellow),var(--pink));display:grid;place-items:center;font-weight:900;color:white}.rankTitle h2{margin:0;color:var(--pink);font-size:23px}.rankTitle p{margin:3px 0;color:var(--muted);font-size:12px}.targets{font-size:12px;text-align:right;color:#514b62}.targets b{color:var(--ink)}
+.progress{height:9px;background:#f1eaf4;border-radius:99px;margin:14px 0;overflow:hidden}.progress i{display:block;height:100%;width:10%;background:linear-gradient(90deg,var(--pink),var(--lav),var(--yellow));transition:.3s}
+.timerBox{text-align:center;padding:8px}.timer{font-size:52px;font-weight:950;color:var(--pink);letter-spacing:2px}.timer.warning{color:var(--red);animation:pulse .7s infinite alternate}@keyframes pulse{to{transform:scale(1.04)}}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;text-align:center}.stat span{font-size:10px;color:var(--muted)}.stat b{display:block;font-size:20px;margin-top:2px}
+.prompt{margin-top:14px;padding:18px;border:1px solid #ead9f2;background:#fffbff;border-radius:16px;font:17px/1.8 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:normal;overflow-wrap:anywhere;min-height:135px}.prompt .typed{color:#9b94a8}.prompt .wrong{color:var(--red);text-decoration:underline}.prompt .current{background:var(--pink);color:white;border-radius:4px;padding:1px 2px;box-shadow:0 0 10px #f43f9e55}
+textarea{width:100%;height:125px;margin-top:12px;border:2px solid #e7d7ef;border-radius:16px;background:#fff;color:var(--ink);padding:15px;font:16px/1.7 ui-monospace,monospace;resize:none;outline:none}textarea:focus{border-color:var(--pink);box-shadow:0 0 0 4px #f43f9e12}
+.actions{display:flex;gap:9px;margin-top:11px}.btn{border:0;border-radius:13px;padding:11px 17px;font-weight:800}.primary{background:linear-gradient(135deg,var(--pink),var(--purple));color:white}.yellow{background:var(--yellow);color:#332500}.ghost{background:#f5eef8;color:var(--ink)}.next{display:none;background:linear-gradient(135deg,#22c55e,#14b8a6);color:white}
+.message{text-align:center;min-height:24px;margin-top:11px;font-size:13px;font-weight:700}
+.side{padding:14px}.sideCard{padding:14px;border:1px solid var(--line);border-radius:16px;margin-bottom:11px;background:#fff}.sideCard h3{margin:0 0 5px;font-size:13px}.big{font-size:30px;font-weight:900}.attemptNum{color:var(--pink)}.mini{color:var(--muted);font-size:11px}.stars{font-size:21px;letter-spacing:3px;color:#ddd}.tip{background:linear-gradient(135deg,#fff3fa,#f5efff);border-color:#efd6ea;line-height:1.6}
+.modal{display:none;position:fixed;inset:0;background:#17132955;backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:20px;z-index:10}.modal.show{display:flex}.modalBox{background:#fff;border:1px solid var(--line);border-radius:24px;max-width:430px;width:100%;padding:28px;text-align:center;box-shadow:0 25px 80px #34203b30}.modalIcon{font-size:60px}.modalBox h2{margin:5px;font-size:28px;color:var(--pink)}.modalBox p{color:var(--muted);line-height:1.6}
+@media(max-width:900px){.dashboard{grid-template-columns:1fr}.levels{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}.level{margin:0}.level div:last-child{display:none}.side{display:grid;grid-template-columns:1fr 1fr;gap:10px}.tip{grid-column:1/-1}}@media(max-width:600px){.app{padding:12px}.levels{grid-template-columns:repeat(2,1fr)}.stats{grid-template-columns:repeat(2,1fr)}.levelHead{flex-direction:column;align-items:flex-start}.targets{text-align:left}.actions{flex-wrap:wrap}}
+</style>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#f43f9e"></head>
+<body>
+<div class="app">
+<header class="header">
+<div class="brand"><div class="logo">⌨️</div><div><h1>TypeRank</h1><p>10-level typing challenge • Noob → Typing Legend</p></div></div>
+<div class="sound"><button id="soundBtn">🔊 Sound ON</button><button id="resetAll">↺ Reset Progress</button></div>
+</header>
+
+<div class="dashboard">
+<aside class="levels card"><h3>🏆 LEVELS</h3><div id="levelList"></div><div class="best">BEST WPM<br><b id="overallBest">0</b></div></aside>
+
+<main class="main card">
+<div class="levelHead"><div class="rankTitle"><div class="rankIcon" id="rankIcon">1</div><div><h2 id="rankName">NOOB</h2><p id="rankDesc">Start your journey.</p></div></div><div class="targets">TARGET<br><b id="targetText">20 WPM • 85% • 60s</b></div></div>
+<div class="progress"><i id="progressBar"></i></div>
+<div class="timerBox"><div class="timer" id="timer">60</div><div class="mini">TIME REMAINING</div></div>
+<div class="stats"><div class="stat"><span>WPM</span><b id="wpm">0</b></div><div class="stat"><span>ACCURACY</span><b id="accuracy">100%</b></div><div class="stat"><span>ATTEMPTS</span><b id="attempts">0</b></div><div class="stat"><span>ERRORS</span><b id="errors">0</b></div></div>
+<div class="prompt" id="prompt"></div>
+<textarea id="input" disabled spellcheck="false" autocomplete="off" autocorrect="off" placeholder="Press START, then type the passage here..."></textarea>
+<div class="actions"><button class="btn primary" id="start">▶ START LEVEL</button><button class="btn ghost" id="newPassage">🔀 NEW PASSAGE</button><button class="btn yellow" id="restart">↻ RESTART</button><button class="btn next" id="next">NEXT LEVEL →</button></div>
+<div class="message" id="message">Level 1 is ready. Pass it to unlock Level 2.</div>
+</main>
+
+<aside class="side card">
+<div class="sideCard"><h3>🎯 ATTEMPTS</h3><div class="big attemptNum" id="attemptSide">0</div><div class="mini">Attempts on this level</div></div>
+<div class="sideCard"><h3>📈 PROGRESS</h3><div class="big" id="progressText">0%</div><div class="stars" id="stars">☆ ☆ ☆ ☆ ☆</div></div>
+<div class="sideCard"><h3>🔥 BEST THIS LEVEL</h3><div class="big" id="bestLevel">0 WPM</div><div class="mini">Your personal best</div></div>
+<div class="sideCard tip">💡 <b>Tip</b><br><span id="tip">Accuracy first. Speed comes naturally.</span></div>
+</aside>
+</div>
+</div>
+
+<div class="modal" id="modal"><div class="modalBox"><div class="modalIcon" id="modalIcon">🏆</div><h2 id="modalTitle">LEVEL CLEARED!</h2><p id="modalText"></p><button class="btn primary" id="modalButton">Continue</button></div></div>
+
+<script>
+const levels=[
+{name:"NOOB",desc:"Start your journey.",wpm:20,acc:85,time:60},
+{name:"BEGINNER",desc:"Build your rhythm.",wpm:25,acc:87,time:55},
+{name:"LEARNER",desc:"Get comfortable.",wpm:30,acc:88,time:50},
+{name:"REGULAR",desc:"Develop consistency.",wpm:35,acc:90,time:50},
+{name:"SKILLED",desc:"Now it gets serious.",wpm:40,acc:91,time:45},
+{name:"PRO",desc:"Speed meets precision.",wpm:48,acc:92,time:45},
+{name:"EXPERT",desc:"Push your limits.",wpm:55,acc:93,time:40},
+{name:"MASTER",desc:"Elite control required.",wpm:63,acc:94,time:40},
+{name:"ELITE",desc:"Very few reach this.",wpm:72,acc:96,time:35},
+{name:"TYPING LEGEND",desc:"The ultimate challenge.",wpm:85,acc:97,time:35}
+];
+
+const passages=[
+["Typing is an essential skill in the digital age. It improves productivity, saves time, and builds confidence."],
+["Practice every day with a steady rhythm. Focus on accuracy first, then allow your speed to grow naturally."],
+["A good typist stays relaxed while working quickly. Keep your fingers close to the keys and avoid unnecessary movement."],
+["Mistakes are feedback, not failure. Notice the keys that slow you down and practice those patterns until they become automatic."],
+["Professional typing requires more than speed. Consistency, accuracy, posture, concentration, and rhythm all matter."],
+["Fast typing becomes easier when your fingers learn common words and patterns. Read slightly ahead and let muscle memory work."],
+["Expert typists can maintain high speed without sacrificing accuracy. They remain calm, recover quickly from errors, and keep moving."],
+["Mastery is built through deliberate practice. Difficult sentences should challenge your speed while demanding careful attention to every character."],
+["Elite performance requires exceptional precision under pressure. Keep your rhythm steady even when the countdown is getting close to zero."],
+["Welcome to the final challenge. A typing legend combines speed, accuracy, rhythm, focus, and confidence while making difficult text look effortless."]
+];
+
+const tips=[
+"Accuracy first. Speed comes naturally.",
+"Keep a steady rhythm instead of rushing.",
+"Look at the passage, not the keyboard.",
+"Relax your hands and avoid unnecessary movement.",
+"Try to make fewer mistakes without slowing too much.",
+"Read a few words ahead while you type.",
+"Recover from mistakes quickly and keep your rhythm.",
+"Consistency is more important than one fast attempt.",
+"Stay calm. Pressure makes people type worse.",
+"You made it this far. Focus and finish strong."
+];
+
+let state=JSON.parse(localStorage.getItem("typeRankState")||"null")||{
+unlocked:0,completed:[],attempts:Array(10).fill(0),best:Array(10).fill(0),sound:true
+};
+let current=0,text="",running=false,time=0,startTime=0,timerId=null;
+
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem("typeRankState",JSON.stringify(state))}
+function shuffle(arr){return [...arr].sort(()=>Math.random()-.5)}
+function chooseText(){let options=shuffle(passages.flat()).filter(x=>x!==text);text=options[0]||passages[0][0];render()}
+function beep(freq=600,duration=.05,type="sine"){if(!state.sound)return;try{const A=window.AudioContext||window.webkitAudioContext;if(!A)return;const c=new A(),o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.value=freq;g.gain.value=.025;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+duration)}catch(e){}}
+function renderLevels(){
+const box=$("levelList");box.innerHTML="";
+levels.forEach((l,i)=>{
+const b=document.createElement("button");b.className="level "+(i===current?"active ":"")+(state.completed.includes(i)?"done":"");b.disabled=i>state.unlocked;b.innerHTML=`<span class="badge">${i<state.completed.length&&state.completed.includes(i)?"✓":i+1}</span><div><strong>${l.name}</strong><small>${l.wpm} WPM • ${l.acc}% • ${l.time}s</small></div>`;
+if(i<=state.unlocked)b.onclick=()=>{if(!running){current=i;resetAttempt();updateUI()}};
+box.appendChild(b);
+});
+}
+function updateUI(){
+const l=levels[current];
+$("rankIcon").textContent=current+1;$("rankName").textContent=l.name;$("rankDesc").textContent=l.desc;
+$("targetText").textContent=`${l.wpm} WPM • ${l.acc}% • ${l.time}s`;
+$("attempts").textContent=state.attempts[current];$("attemptSide").textContent=state.attempts[current];
+$("bestLevel").textContent=(state.best[current]||0)+" WPM";
+$("progressBar").style.width=((state.unlocked+1)/10*100)+"%";
+$("progressText").textContent=(state.completed.length/10*100)+"%";
+$("stars").textContent="★★★★★".split("").map((s,i)=>i<state.completed.length?"★":"☆").join(" ");
+$("tip").textContent=tips[current];
+$("overallBest").textContent=Math.max(...state.best,0);
+$("timer").textContent=running?time:l.time;
+$("soundBtn").textContent=state.sound?"🔊 Sound ON":"🔇 Sound OFF";
+renderLevels();
+}
+function resetAttempt(newPassage=true){
+clearInterval(timerId);running=false;const l=levels[current];time=l.time;$("timer").textContent=time;$("timer").classList.remove("warning");
+$("input").value="";$("input").disabled=true;$("wpm").textContent="0";$("accuracy").textContent="100%";$("errors").textContent="0";
+$("start").disabled=false;$("start").textContent="▶ START LEVEL";$("next").style.display="none";
+$("message").textContent=`Level ${current+1}: reach ${l.wpm} WPM with ${l.acc}% accuracy in ${l.time} seconds.`;
+if(newPassage)chooseText();else render();
+}
+function calculate(){
+const typed=$("input").value;let correct=0,errors=0;
+for(let i=0;i<typed.length;i++){if(typed[i]===text[i])correct++;else errors++}
+const elapsed=running?Math.max((Date.now()-startTime)/1000,.5):Math.max((Date.now()-startTime)/1000,.5);
+const wpm=Math.round((correct/5)/(elapsed/60));const acc=typed.length?Math.round(correct/typed.length*100):100;
+$("wpm").textContent=wpm;$("accuracy").textContent=acc+"%";$("errors").textContent=errors;return{wpm,acc,errors};
+}
+function render(){
+const typed=$("input").value;let out="";
+for(let i=0;i<text.length;i++){
+const safe=text[i]===" "?"&nbsp;":text[i].replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+if(i<typed.length)out+=`<span class="${typed[i]===text[i]?"typed":"wrong"}">${safe}</span>`;
+else if(i===typed.length)out+=`<span class="current">${safe}</span>`;
+else out+=safe;
+}
+$("prompt").innerHTML=out;
+}
+function start(){
+if(running)return;
+running=true;state.attempts[current]++;save();updateUI();$("input").disabled=false;$("input").focus();
+time=levels[current].time;startTime=Date.now();$("timer").textContent=time;$("start").textContent="⏱ TYPING...";
+beep(700,.08);
+timerId=setInterval(()=>{time--;$("timer").textContent=time;if(time<=10)$("timer").classList.add("warning");if(time<=0)finish(false)},1000);
+}
+function finish(successByText){
+if(!running)return;clearInterval(timerId);running=false;const r=calculate(),l=levels[current];
+$("input").disabled=true;
+if(r.wpm>=l.wpm&&r.acc>=l.acc){
+state.completed=[...new Set([...state.completed,current])];state.unlocked=Math.max(state.unlocked,Math.min(9,current+1));state.best[current]=Math.max(state.best[current],r.wpm);save();
+beep(880,.12);setTimeout(()=>beep(1175,.16),120);
+$("message").textContent=current===9?"🏆 YOU ARE A TYPING LEGEND!":"🎉 LEVEL CLEARED! The next level is now unlocked.";
+$("next").style.display=current<9?"inline-block":"none";showModal(true,r);
+}else{
+state.best[current]=Math.max(state.best[current],r.wpm);save();beep(180,.18,"square");
+$("message").textContent=`❌ Not cleared. Target: ${l.wpm} WPM + ${l.acc}% accuracy. Attempt ${state.attempts[current]}.`;
+showModal(false,r);
+}
+updateUI();
+}
+function showModal(ok,r){
+const l=levels[current];$("modalIcon").textContent=ok?(current===9?"👑":"🏆"):"⏰";$("modalTitle").textContent=ok?(current===9?"TYPING LEGEND!":"LEVEL CLEARED!"):"TRY AGAIN!";
+$("modalText").textContent=`You scored ${r.wpm} WPM with ${r.acc}% accuracy and ${r.errors} errors. ${ok?(current<9?"Next level is harder and has a shorter time limit.":"You completed all 10 levels!"):`You need at least ${l.wpm} WPM and ${l.acc}% accuracy.`}`;
+$("modalButton").textContent=ok&&current<9?"NEXT LEVEL":"TRY AGAIN";$("modal").classList.add("show");
+}
+$("modalButton").onclick=()=>{$("modal").classList.remove("show");if(state.unlocked>current&&current<9){current++;resetAttempt(true)}else resetAttempt(true);updateUI()};
+$("start").onclick=start;
+$("restart").onclick=()=>resetAttempt(false);
+$("newPassage").onclick=()=>{if(!running){chooseText();$("message").textContent="🔀 New passage selected. The level target stays the same."}};
+$("next").onclick=()=>{if(state.unlocked>current&&!running){current++;resetAttempt(true);updateUI()}};
+$("soundBtn").onclick=()=>{state.sound=!state.sound;save();updateUI();if(state.sound)beep(800,.08)};
+$("resetAll").onclick=()=>{if(confirm("Reset all level progress, attempts and best scores?")){localStorage.removeItem("typeRankState");location.reload()}};
+$("input").addEventListener("input",()=>{
+if(!running)start();render();const r=calculate();
+if($("input").value.length>=text.length)finish(true);
+else if(state.sound)beep($("input").value.slice(-1)===text[$("input").value.length-1]?560:160,.012);
+});
+chooseText();updateUI();
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+}
+</script>
+</body>
+</html>
